@@ -54,11 +54,16 @@ void loop() {
   Serial.println(request);
   if(request[5] == 'O')
   {
-     digitalWrite(led, LOW);
+     analogWrite(led, 0);
   }
-  if(request[5] == 'C')
+  else if(request[5] == 'C')
   {
-     digitalWrite(led, HIGH);
+     analogWrite(led, 1024);
+  }
+  else
+  {
+     int val = request.toInt();
+     analogWrite(led, val);
   }
   myclient.flush();
   //myclient.print("OK");
