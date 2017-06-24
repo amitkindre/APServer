@@ -1,12 +1,14 @@
 #include <ESP8266WiFi.h>
 
 //LED_BUILTIN
-int led = 16;
-
+int RedLed = 16;
+int GreenLed = 5;
+int BlueLed = 4;
+int led = 2;
 WiFiServer server(8080);
 WiFiClient myclient;
 
-char* ssid = "ESPServer";
+char* ssid = "SSEServer";
 
 
 void setup() {
@@ -36,7 +38,7 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
 
-  
+  String val;
   myclient = server.available();
 
   if(!myclient){
@@ -60,11 +62,40 @@ void loop() {
   {
      analogWrite(led, 1024);
   }
-  else
+  else if(request.substring(0,3) == "RED")
   {
-     int val = request.toInt();
-     analogWrite(led, val);
+     int val;
+     val = getInteger(request);
+     analogWrite(RedLed, val);   
+  }
+   else if(request.substring(0,3) == "GRE")
+  {
+     int val;
+     val = getInteger(request);
+     analogWrite(GreenLed, val);   
+  }
+   else if(request.substring(0,3) == "BLU")
+  {
+     int val;
+     val = getInteger(request);
+     analogWrite(BlueLed, val);   
   }
   myclient.flush();
   //myclient.print("OK");
+}
+
+
+int getInteger(String x)
+{
+  char dataBuffer[10];
+  char intValue[5];
+  x.toCharArray(dataBuffer,8);
+  
+  for(int i=0; i < 7; i++)
+  {
+       intValue[i] = dataBuffer[i+3];
+  }
+  intValue[4] = '\0';
+   Serial.print(intValue);
+  return atoi(intValue);
 }
