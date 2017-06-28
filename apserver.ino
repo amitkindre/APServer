@@ -80,6 +80,7 @@ void loop() {
      val = getInteger(request);
      analogWrite(BlueLed, val);   
   }
+  myclient.write("OK\r\n");
   myclient.flush();
   //myclient.print("OK");
 }
