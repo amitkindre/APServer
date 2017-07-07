@@ -1,0 +1,45 @@
+#include <ESP8266WiFi.h>
+
+char ssid[] = "TestServer";
+WiFiServer server(8080);
+WiFiClient clientx;
+
+void setup() {
+  // put your setup code here, to run once:
+
+  Serial.begin(9600);
+  Serial.println("");
+  pinMode(RedLed, OUTPUT);
+
+  WiFi.mode(WIFI_AP); //Only Access point
+  WiFi.softAP(ssid);  //Start HOTspot removing password will disable security
+
+  IPAddress myIP = WiFi.softAPIP(); //Get IP address
+  Serial.print("HotSpt IP:");
+  Serial.println(myIP);
+
+  server.begin(); 
+  Serial.println("Server Started");
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+
+  if(!clientx.connected()){
+    clientx = server.available();    
+    if(clientx.connected()){
+      Serial.println("New client connedted");
+    }
+  }
+  else{
+    if(clientx.available()){
+      String req = clientx.readStringUntil('\r');
+      clientx.flush();
+      Serial.println(req);
+      clientx.println("OK");  
+    }
+  }
+  
+  
+}
