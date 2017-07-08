@@ -35,7 +35,7 @@ void loop() {
   else{
     if(clientx.available()){
       String req = clientx.readStringUntil('\r');
-      clientx.flush();
+      clientx.flush();    //add this line (clientx.flush()) immediate after reading client data
       Serial.println(req);
       clientx.println("OK");  
     }
