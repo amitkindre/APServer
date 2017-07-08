@@ -37,14 +37,17 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly
-  if(!myclient.connected()){                      //1.if no client is connected
+  if(!myclient || !myclient.connected()){                      //1.if no client is connected
     myclient = server.available();                //2.Get client this 1,2 sequence will limit number of 
     if(myclient.connected()){                     //clients connected as well client will not be disconnected continiously
       Serial.println("New client connedted");
     }
   }
-  else
-  {
+  else{
+    //no free/disconnected spot so reject
+    WiFiClient clientz = server.available();
+    clientz.stop();
+  
     if(myclient.available())
     {
       String request = myclient.readStringUntil('\r');
@@ -78,7 +81,7 @@ void loop() {
       }
       myclient.write("OK\r\n");
     }
- }
+  }
 }
     
     
