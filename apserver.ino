@@ -4,6 +4,8 @@
 int RedLed = 16;
 int GreenLed = 5;
 int BlueLed = 4;
+int WhiteLed = 0;
+int WarmLed = 2;
 int led = 2;
 WiFiServer server(8080);
 WiFiClient myclient;
@@ -78,6 +80,20 @@ void loop() {
          int val;
          val = getInteger(request);
          analogWrite(BlueLed, val);   
+      }
+
+       else if(request.substring(0,3) == "WHI")
+      {
+         int val;
+         val = getInteger(request);
+         analogWrite(WhiteLed, val);   
+      }
+
+       else if(request.substring(0,3) == "WRM")
+      {
+         int val;
+         val = getInteger(request);
+         analogWrite(WarmLed, val);   
       }
       myclient.write("OK\r\n");
     }
