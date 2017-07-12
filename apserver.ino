@@ -1,11 +1,11 @@
 #include <ESP8266WiFi.h>
 
 //LED_BUILTIN
-int RedLed = 16;
-int GreenLed = 5;
-int BlueLed = 4;
-int WhiteLed = 0;
-int WarmLed = 2;
+int RedLed = 16;    //D0
+int GreenLed = 5;   //D1
+int BlueLed = 4;    //D2
+int WhiteLed = 14;  //D5
+int WarmLed = 12;   //D6
 int led = 2;
 WiFiServer server(8080);
 WiFiClient myclient;
