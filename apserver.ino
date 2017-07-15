@@ -9,8 +9,11 @@ int WarmLed = 12;   //D6
 int led = 2;
 WiFiServer server(8080);
 WiFiClient myclient;
-
+IPAddress clientIP;
 char* ssid = "SSEServer";
+
+
+
 
 
 void setup() {
@@ -37,22 +40,41 @@ void setup() {
 
 }
 
+ String request;
+ WiFiClient clientz ;
+ IPAddress clientzIP; 
+ int val;
+
 void loop() {
+  
   // put your main code here, to run repeatedly
   if(!myclient || !myclient.connected()){                      //1.if no client is connected
-    myclient = server.available();                //2.Get client this 1,2 sequence will limit number of 
-    if(myclient.connected()){                     //clients connected as well client will not be disconnected continiously
-      Serial.println("New client connedted");
-    }
+      myclient = server.available();                //2.Get client this 1,2 sequence will limit number of 
+      if(myclient.connected()){                     //clients connected as well client will not be disconnected continiously
+        digitalWrite(led, HIGH);  
+        clientIP = myclient.remoteIP();
+        Serial.print("New client connedted : ");
+        Serial.println(clientIP);
+      }
+      else{
+          digitalWrite(led, LOW);  
+      }
   }
   else{
     //no free/disconnected spot so reject
-    WiFiClient clientz = server.available();
-    clientz.stop();
+    clientz = server.available();
+    if(clientz){ 
+      Serial.print("Client z");
+      clientzIP = clientz.remoteIP();
+      if(clientIP == clientzIP)             //old client is reconnected
+        myclient = clientz;
+      else
+        clientz.stop();
+    }
   
     if(myclient.available())
     {
-      String request = myclient.readStringUntil('\r');
+      request = myclient.readStringUntil('\r');
       myclient.flush();
       Serial.println(request);
       if(request[5] == 'O')
@@ -65,33 +87,28 @@ void loop() {
       }
       else if(request.substring(0,3) == "RED")
       {
-         int val;
          val = getInteger(request);
          analogWrite(RedLed, val);   
       }
        else if(request.substring(0,3) == "GRE")
       {
-         int val;
          val = getInteger(request);
          analogWrite(GreenLed, val);   
       }
        else if(request.substring(0,3) == "BLU")
       {
-         int val;
          val = getInteger(request);
          analogWrite(BlueLed, val);   
       }
 
        else if(request.substring(0,3) == "WHI")
       {
-         int val;
          val = getInteger(request);
          analogWrite(WhiteLed, val);   
       }
 
        else if(request.substring(0,3) == "WRM")
       {
-         int val;
          val = getInteger(request);
          analogWrite(WarmLed, val);   
       }
@@ -99,12 +116,12 @@ void loop() {
     }
   }
 }
-    
-    
+
+char dataBuffer[10];
+char intValue[5];    
 int getInteger(String x)
 {
-  char dataBuffer[10];
-  char intValue[5];
+  
   x.toCharArray(dataBuffer,8);
   
   for(int i=0; i < 7; i++)
